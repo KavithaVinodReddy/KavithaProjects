@@ -22,14 +22,15 @@ public class end2endStep {
     DashBoardPage dashBoardPage = new DashBoardPage();
     AddEmployeeOverlayPage addEmployeeOverlayPage = new AddEmployeeOverlayPage();
     SystemUsersPage usersPage;
+    EmployeeListPage employeeListPage;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         BrowserFactory.startBrowser();
     }
 
     @After
-    public void cleanUp(){
+    public void cleanUp() {
         BrowserFactory.stopBrowser();
         System.out.println("closing the browser");
     }
@@ -102,4 +103,23 @@ public class end2endStep {
     }
 
 
+    @When("^admin deletes new user \"([^\"]*)\"$")
+    public void adminDeletesNewUser(String name) {
+        dashBoardPage.selectEmployeeList();
+        System.out.println("EMp name: " +name);
+        employeeListPage = new EmployeeListPage();
+        assertTrue(employeeListPage.doesEmployeeExists(name));
+        employeeListPage.deleteAnEmployee(name);
+
+    }
+
+    @Then("^new user \"([^\"]*)\" should not visible in the employee list$")
+    public void newUserShouldNotVisibleInTheEmployeeList(String name) {
+        assertFalse(employeeListPage.doesEmployeeExists(name));
+    }
+
+    @And("^new user \"([^\"]*)\" should not visible in the system users list$")
+    public void newUserShouldNotViisibleInTheSystemUsersList(String name) {
+        assertFalse(usersPage.doesUserExists(name ));
+    }
 }

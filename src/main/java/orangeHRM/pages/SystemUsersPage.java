@@ -58,6 +58,16 @@ public class SystemUsersPage extends BasePage {
         return role;
     }
 
+    public boolean doesUserExists(String name) {
+        for (WebElement user : users) {
+            String employeeName = user.findElement(By.xpath("//td[2]")).getText();
+            if (employeeName.equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void changeStatus(String s) {
         WebDriverWait wait = new WebDriverWait(driver, 30);
         wait.until(ExpectedConditions.elementToBeClickable(By.id("status_inputfileddiv")));

@@ -38,6 +38,7 @@ public class UserRolesPage extends BasePage {
                 sleep();
                 driver.findElement(By.cssSelector(".btn.primary-btn")).click();
                 sleep();
+                break;
             }
         }
     }

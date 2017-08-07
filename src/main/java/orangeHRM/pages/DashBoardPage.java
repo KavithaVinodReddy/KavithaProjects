@@ -35,10 +35,20 @@ public class DashBoardPage extends BasePage {
     WebElement logOut;
 
     public void expandPIMMenu() {
-        driver.switchTo().frame("noncoreIframe");
+        try {
+            driver.switchTo().frame("noncoreIframe");
+        } catch (Exception ex) {
+
+        }
+        String className = driver.findElement(By.xpath("//li[@id='menu_pim_viewPimModule']/a")).getAttribute("class");
+        System.out.println("PIM menu: " + className);
+        if (!className.contains("active")) {
+            pimTab.click(); /// this is giving issues a lot
+            sleep();
+            System.out.println("PIM menu clicked");
+        }
         //if (isExpanded(pimTab))
-        pimTab.click(); /// this is giving issues a lot
-        sleep();
+
     }
 
     public void expandAdminMenu() {
