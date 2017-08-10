@@ -1,5 +1,6 @@
 package orangeHRM.pages;
 
+import orangeHRM.utils.Utilities;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -8,6 +9,8 @@ import orangeHRM.utils.AutomationConstants;
 
 public class LoginPage extends BasePage {
 
+    @FindBy(id = "divLoginForm")
+    WebElement loginFormDiv;
     @FindBy(id = "txtUsername")
     public WebElement userName;
     @FindBy(id = "txtPassword")
@@ -31,22 +34,24 @@ public class LoginPage extends BasePage {
     @FindBy(xpath = "//div[@id='social-icons']/a[4]/img")
     public WebElement youTubeImg;
     @FindBy(id = "spanMessage")
-    public WebElement errorMsg;
+    WebElement errorMsg;
+
+    public LoginPage() {
+        super();
+        Utilities utils = new Utilities();
+        utils.waitForPageToLoad(loginFormDiv);
+    }
 
     public void open() {
-        if (driver.getCurrentUrl() != AutomationConstants.URL) {
+        if (!driver.getCurrentUrl().equals(AutomationConstants.URL)) {
             driver.get(AutomationConstants.URL);
         }
     }
 
-    public String isInLoginPage() {
-        return driver.getCurrentUrl();
-    }
-
-    public void Login(String userName, String password) {
-        this.userName.sendKeys(userName);
-        this.password.sendKeys(password);
-        this.loginBtn.click();
+    public void Login(String name, String pwd) {
+        userName.sendKeys(name);
+        password.sendKeys(pwd);
+        loginBtn.click();
         sleep();
     }
 

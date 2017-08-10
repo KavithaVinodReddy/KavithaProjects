@@ -19,8 +19,8 @@ import static org.junit.Assert.assertTrue;
 
 public class end2endStep {
     LoginPage loginPage = new LoginPage();
-    DashBoardPage dashBoardPage = new DashBoardPage();
-    AddEmployeeOverlayPage addEmployeeOverlayPage = new AddEmployeeOverlayPage();
+    DashBoardPage dashBoardPage;
+    AddEmployeeOverlayPage addEmployeeOverlayPage;
     SystemUsersPage usersPage;
     EmployeeListPage employeeListPage;
 
@@ -37,9 +37,10 @@ public class end2endStep {
 
     @Given("^Admin logsIn$")
     public void adminLogsIn() {
-        loginPage.open();
-        assertEquals(AutomationConstants.URL, loginPage.isInLoginPage());
+        //loginPage.open();
+        assertEquals(AutomationConstants.URL, loginPage.getUrl());
         loginPage.LoginAsAdmin();
+        dashBoardPage = new DashBoardPage();
         assertTrue(loginPage.getUrl().endsWith("dashboard/index"));
     }
 
@@ -47,6 +48,7 @@ public class end2endStep {
     public void adminCreatesANewUserWithLoginDetails(DataTable table) {
         dashBoardPage.expandPIMMenu();
         dashBoardPage.selectAddEmployee();
+        addEmployeeOverlayPage = new AddEmployeeOverlayPage();
         addEmployeeOverlayPage.fillTheForm(table);
         addEmployeeOverlayPage.save();
         loginPage.waitForElement(By.id("small-title"));
@@ -59,10 +61,10 @@ public class end2endStep {
         assertTrue(dashBoardPage.getUrl().endsWith("admin/user_roles"));
         UserRolesPage rolesPage = new UserRolesPage();
         rolesPage.addUserRole();
-
         assertTrue(dashBoardPage.getUrl().endsWith("admin/add_user_role"));
         AddUserRolePage userRolePage = new AddUserRolePage();
         userRolePage.createUserRole(newRoleName);
+        assertTrue(dashBoardPage.getUrl().endsWith("admin/user_roles"));
         assertTrue(rolesPage.isRoleAdded(newRoleName));
         //assert that new role is displayed
     }
@@ -72,7 +74,9 @@ public class end2endStep {
         dashBoardPage.expandAdminMenu();
         dashBoardPage.selectUsersLink();
         usersPage = new SystemUsersPage();
+        System.out.println("searching for "+addEmployeeOverlayPage.newUser_uid );
         usersPage.editUser(addEmployeeOverlayPage.newUser_uid);
+        assertTrue(usersPage.isEditUserWindowOpen());
         EditUserPage editUserPage = new EditUserPage();
         editUserPage.addRoleToUser(newRole);
     }
@@ -106,8 +110,9 @@ public class end2endStep {
     @When("^admin deletes new user \"([^\"]*)\"$")
     public void adminDeletesNewUser(String name) {
         dashBoardPage.selectEmployeeList();
-        System.out.println("EMp name: " +name);
+        System.out.println("Emp name: " +name);
         employeeListPage = new EmployeeListPage();
+        assertTrue(employeeListPage.getUrl().endsWith("pim/employees"));
         assertTrue(employeeListPage.doesEmployeeExists(name));
         employeeListPage.deleteAnEmployee(name);
 

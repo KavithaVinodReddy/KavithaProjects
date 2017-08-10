@@ -34,7 +34,7 @@ public class LoginStep {
     public void openLoginPage()  {
         loginPage = new LoginPage();
         loginPage.open();
-        assertEquals(AutomationConstants.URL, loginPage.isInLoginPage());
+        assertEquals(AutomationConstants.URL, loginPage.getUrl());
     }
 
     @When("^I enter userName as \"([^\"]*)\", password as \"([^\"]*)\"$")

@@ -24,21 +24,30 @@ public class SystemUsersPage extends BasePage {
     List<WebElement> status;
     @FindBy(id = "systemUserSaveBtn")
     WebElement save;
+    @FindBy(id="modal1")
+    WebElement editUserModal;
 
     public void editUser() {
         editBtn.click();
     }
 
     public void editUser(String name) {
+        System.out.println("User size: " + users.size());
         for (int i = 1; i < users.size(); i++) {
             String xpath = "//table[@class='highlight bordered']/tbody/tr[" + i + "]/td[2]";
             String userName = driver.findElement(By.xpath(xpath)).getText();
             if (userName.equals(name)) {
+                System.out.println("Systems user page: user name found in the list: " + userName);
                 String xpath1 = "//table[@class='highlight bordered']/tbody/tr[" + i + "]/td[8]";
                 driver.findElement(By.xpath(xpath1)).click();
+                System.out.println("Systems user page: edit clicked");
                 sleep();
             }
         }
+    }
+
+    public boolean isEditUserWindowOpen(){
+        return editUserModal.isDisplayed();
     }
 
     public String getUserRole(String name) {
@@ -54,7 +63,6 @@ public class SystemUsersPage extends BasePage {
                 break;
             }
         }
-
         return role;
     }
 

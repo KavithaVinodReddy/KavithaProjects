@@ -20,3 +20,9 @@ Feature: end to end functionality testing
     When admin deletes new user "Danny Harrison"
     Then new user "Danny Harrison" should not visible in the employee list
     And new user "Danny Harrison" should not visible in the system users list
+
+
+  Scenario: tetsing
+    When admin deletes new user "Danny Harrison"
+    Then new user "Danny Harrison" should not visible in the employee list
+    And new user "Danny Harrison" should not visible in the system users list

@@ -26,7 +26,7 @@ public class AutomationConstants {
     public static String empReportToPage_Url="http://ashvink.trials621.orangehrmlive.com/client/#/pim/employees/14/employee_reportto";
 
     //browser settings
-    public static final String BROWSER_TYPE = "chrome";
+    public static final String BROWSER_TYPE = "firefox";
     public static final String REMOTE_BROWSER = "false";
     public static final String SELENIUM_GRID_URL ="http://kavithareddys:e345d56c-06cf-4da7-b0c9-b20941de974a@ondemand.saucelabs.com:80/wd/hub";
           //grid:  //"http://localhost:4444/wd/hub";

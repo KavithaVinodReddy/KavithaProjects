@@ -1,5 +1,6 @@
 package orangeHRM.pages;
 
+
 import orangeHRM.utils.Utilities;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -7,13 +8,16 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-
 public class DashBoardPage extends BasePage {
-    @FindBy(xpath = "//li[@id='menu_admin_viewAdminModule']/a/span[3]")
+
+
+    @FindBy(id = "left-menu")
+    WebElement leftMenu;
+    @FindBy(css = ".level1#menu_admin_viewAdminModule")
     WebElement adminTab;
     @FindBy(xpath = "//li[@id='menu_admin_UserManagement']")
     WebElement usersManagementMenu;
-    @FindBy(xpath = "//li[@id='menu_pim_viewPimModule']")
+    @FindBy(css = ".level1#menu_pim_viewPimModule")
     WebElement pimTab;
     @FindBy(xpath = "//li[@id='menu_admin_Organization']")
     WebElement organizationTab;
@@ -23,7 +27,7 @@ public class DashBoardPage extends BasePage {
     WebElement userRoleLink;
     @FindBy(xpath = "//a[@id='menu_admin_viewLocations']")
     WebElement locationsLink;
-    @FindBy(xpath = "//a[@id='menu_pim_viewEmployeeList']")
+    @FindBy(css = "#menu_pim_viewEmployeeList")
     WebElement empListLink;
     @FindBy(xpath = "//a[@id='menu_pim_addEmployee']")
     WebElement addEmpLink;
@@ -33,31 +37,54 @@ public class DashBoardPage extends BasePage {
     WebElement userName;
     @FindBy(linkText = "Logout")
     WebElement logOut;
+    Utilities utilities = new Utilities();
 
-    public void expandPIMMenu() {
-        try {
-            driver.switchTo().frame("noncoreIframe");
-        } catch (Exception ex) {
-
-        }
-        String className = driver.findElement(By.xpath("//li[@id='menu_pim_viewPimModule']/a")).getAttribute("class");
-        System.out.println("PIM menu: " + className);
-        if (!className.contains("active")) {
-            pimTab.click(); /// this is giving issues a lot
-            sleep();
-            System.out.println("PIM menu clicked");
-        }
-        //if (isExpanded(pimTab))
-
+    public DashBoardPage() {
+        super();
+        System.out.println("waiting for the page to load");
+        waitForElement(By.id("noncoreIframe"));
+        driver.switchTo().frame("noncoreIframe");
+        utilities.waitForPageToLoad(leftMenu);
     }
 
+    public void expandPIMMenu() {
+        waitForElement(By.id("menu_pim_viewPimModule"));
+        if (isPIMExpanded()) return;
+        pimTab.click();
+        sleep(); // waiting for the page to load
+        System.out.println("PIM menu clicked to expand");
+    }
+
+    public boolean isPIMExpanded() {
+        try {
+            if (pimTab.findElement(By.cssSelector("a.collapsible-header.active")) != null) {
+                System.out.println("its expanded");
+                return true;
+            } else {
+                System.out.println("its collapsed");
+                return true;
+            }
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
+    public void collapsePIMMenu() {
+        if (!isPIMExpanded()) return;
+        else {
+            pimTab.click(); /// this is giving issues a lot
+            sleep(); // waiting for the page to load
+            System.out.println("PIM menu clicked to collapse");
+        }
+    }
+
+    //todo-refactor to have separate methods
     public void expandAdminMenu() {
         waitForElement(By.id("menu_admin_viewAdminModule"));
         String className = driver.findElement(By.xpath("//li[@id='menu_admin_viewAdminModule']/a")).getAttribute("class");
         System.out.println("Admin menu: " + className);
         if (!className.contains("active")) {
-            //if (!isExpanded(usersManagementLink))
-            sleep(); //i don't like adding this but somereason getting intermittend errors here
+            sleep(); //i don't like adding this but some reason getting intermittent errors here
             adminTab.click(); /// this is giving issues a lot
             System.out.println("Admin menu clicked");
         }
@@ -66,13 +93,7 @@ public class DashBoardPage extends BasePage {
     public void selectUsersLink() {
         expandUserManagementMenu();
         usersLink.click();
-    }
-
-    public boolean isExpanded(WebElement menu) {
-        String className = menu.findElement(By.xpath("//a")).getAttribute("class");
-        System.out.println(className);
-        if (className.contains("active")) return true;
-        else return false;
+        sleep();//wait till the page loads
     }
 
     public void expandUserManagementMenu() {
@@ -86,6 +107,7 @@ public class DashBoardPage extends BasePage {
 
     public void selectUsersRoleLink() {
         expandUserManagementMenu();
+        utilities.waitForElementClickable(By.id("menu_admin_viewUserRoles"));
         userRoleLink.click();
         sleep(); //todo- add wait for some element instead of sleep
     }
@@ -99,15 +121,16 @@ public class DashBoardPage extends BasePage {
     }
 
     public void selectAddEmployee() {
+        waitForElement(By.id("menu_pim_addEmployee"));
         addEmpLink.click();
         sleep();
     }
 
     public void selectEmployeeList() {
         expandPIMMenu();
-        new WebDriverWait(driver, 30).until(
-                ExpectedConditions.elementToBeClickable(By.xpath("//a[@id='menu_pim_viewEmployeeList']")));
+        utilities.waitForElement(By.id("menu_pim_viewEmployeeList"));
         empListLink.click();
+        //sleep();// wait till the page loads
     }
 
     public void logOut() {

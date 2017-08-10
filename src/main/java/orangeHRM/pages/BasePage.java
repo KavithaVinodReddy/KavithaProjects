@@ -44,6 +44,7 @@ public class BasePage extends BrowserFactory {
         wait.until(ExpectedConditions.visibilityOfElementLocated(by));
     }
 
+
     public static void hoverOver(WebElement hover) {
         Actions actions = new Actions(driver);
         actions.moveToElement(hover).perform();

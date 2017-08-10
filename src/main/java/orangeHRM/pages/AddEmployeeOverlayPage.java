@@ -1,6 +1,8 @@
 package orangeHRM.pages;
 
 import cucumber.api.DataTable;
+import orangeHRM.utils.Utilities;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
@@ -37,9 +39,20 @@ public class AddEmployeeOverlayPage extends BasePage {
     WebElement saveButton;
     @FindBy(xpath = "//a[@class='modal-action modal-close waves-effect waves-green btn']")
     WebElement cancelButton;
+    @FindBy(id="addEmployeeModal")
+    WebElement modalDiv;
 
     public static String newUser_uid;
     public static String newUser_pwd;
+
+    public AddEmployeeOverlayPage(){
+        super();
+        Utilities utilities = new Utilities();
+        //sleep();
+        driver.switchTo().defaultContent();
+        utilities.waitForPageToLoad(modalDiv);
+        System.out.println("finished waiting for the page to load");
+    }
 
     public void createEmployee(String firstName, String middleName, String lastName, String location) {
         this.firstName.sendKeys(firstName);
@@ -51,7 +64,8 @@ public class AddEmployeeOverlayPage extends BasePage {
 
     public void fillTheForm(DataTable table) {
         List<List<String>> raw = table.raw();
-        firstName.sendKeys(raw.get(1).get(0));
+        waitForElement(By.id("firstName"));
+        firstName.sendKeys(raw.get(1).get(0));  ///intermittent issues to local element
         middleName.sendKeys(raw.get(1).get(1));
         lastName.sendKeys(raw.get(1).get(2));
         location.click(); //TODO select the location correctly

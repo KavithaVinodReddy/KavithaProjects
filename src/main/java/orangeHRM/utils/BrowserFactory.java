@@ -16,33 +16,44 @@ import java.util.concurrent.TimeUnit;
 
 public class BrowserFactory {
 
-    private static WebDriver driver;
+    protected static WebDriver driver;
+
     static Logger logger = Logger.getLogger(BrowserFactory.class);
 
     public static void startBrowser() {
 
         if (driver != null) return;
 
-        if (AutomationConstants.REMOTE_BROWSER.equalsIgnoreCase("true")) {
+        String remoteBrowser;
+        if (System.getProperty("RemoteBrowser") != null) {
+            remoteBrowser = System.getProperty("RemoteBrowser");
+        } else {
+            remoteBrowser = AutomationConstants.REMOTE_BROWSER;
+        }
+
+        if (remoteBrowser.equalsIgnoreCase("true")) {
+            String browserType = "Chrome"; //default
+            if (System.getProperty("BrowserType") != null) {
+                browserType = System.getProperty("BrowserType");
+            } else {
+                browserType = AutomationConstants.BROWSER_TYPE;
+            }
             logger.info("grid started in SauceLabs...");
             DesiredCapabilities capabilities = new DesiredCapabilities();
-            String browser = "chrome";
 
-            if (System.getProperty("Browser") != null) {
-                browser = System.getProperty("Browser");
-            }
-            if (browser.equalsIgnoreCase("firefox")) {
+
+            if (browserType.equalsIgnoreCase("firefox")) {
                 capabilities = DesiredCapabilities.firefox();
 
-            } else if (browser.equalsIgnoreCase("chrome")) {
+            } else if (browserType.equalsIgnoreCase("chrome")) {
                 capabilities = DesiredCapabilities.chrome();
 
-            } else if (browser.equalsIgnoreCase("IE")) {
+            } else if (browserType.equalsIgnoreCase("IE")) {
                 capabilities = DesiredCapabilities.internetExplorer();
             }
-            logger.info("Browser:" + browser);
+            logger.info("Browser:" + browserType);
             capabilities.setPlatform(Platform.WIN10);
-            //capabilities.setVersion("48");
+            capabilities.setVersion("48");
             URL url = null;
             try {
                 url = new URL(AutomationConstants.SELENIUM_GRID_URL);
@@ -59,27 +70,34 @@ public class BrowserFactory {
 
         } else {
             logger.info("Starting tests in local browsers...");
+            String browserType = "Chrome";
+            if (System.getProperty("BrowserType") != null) {
+                browserType = System.getProperty("BrowserType");
+            } else {
+                browserType = AutomationConstants.BROWSER_TYPE;
+            }
             String path = System.getProperty("user.dir") + "/src/main/resources/Browsers/";
             logger.info(path);
-            if (AutomationConstants.BROWSER_TYPE.equalsIgnoreCase("Firefox")) {
+            if (browserType.equalsIgnoreCase("Firefox")) {
                 System.setProperty("webdriver.gecko.driver", path + "geckodriver.exe");
-                driver = new FirefoxDriver();
-            } else if (AutomationConstants.BROWSER_TYPE.equalsIgnoreCase("Chrome")) {
+                DesiredCapabilities capabilities = DesiredCapabilities.firefox();
+                driver = new FirefoxDriver(capabilities);
+            } else if (browserType.equalsIgnoreCase("Chrome")) {
                 System.setProperty("webdriver.chrome.driver", path + "chromedriver.exe");
                 DesiredCapabilities capabilities = DesiredCapabilities.chrome();
                 driver = new ChromeDriver(capabilities);
-            } else if (AutomationConstants.BROWSER_TYPE.equalsIgnoreCase("IE")) {
+            } else if (browserType.equalsIgnoreCase("IE")) {
                 System.setProperty("webdriver.ie.driver", path + "IEDriverServer.exe");
                 driver = new InternetExplorerDriver();
-            } else if (AutomationConstants.BROWSER_TYPE.equalsIgnoreCase("Safari")) {
+            } else if (browserType.equalsIgnoreCase("Safari")) {
                 System.setProperty("webdriver.ie.driver", path + "SafariDriver.exe");
                 driver = new SafariDriver();
             }
+            logger.info("Browser:" + browserType);
         }
         driver.manage().deleteAllCookies();
         driver.get(AutomationConstants.URL);
         driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
     }
 
     public static void stopBrowser() {
