@@ -5,6 +5,7 @@ import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -80,8 +81,13 @@ public class BrowserFactory {
             logger.info(path);
             if (browserType.equalsIgnoreCase("Firefox")) {
                 System.setProperty("webdriver.gecko.driver", path + "geckodriver.exe");
+                FirefoxOptions firefoxOptions = new FirefoxOptions();
+                firefoxOptions.addPreference("security.insecure_password.ui.enabled", false);
+                firefoxOptions.addPreference("security.insecure_field_warning.contextual.enabled", false);
+
                 DesiredCapabilities capabilities = DesiredCapabilities.firefox();
-                driver = new FirefoxDriver(capabilities);
+                firefoxOptions.addCapabilities(capabilities);
+                driver = new FirefoxDriver(firefoxOptions);
             } else if (browserType.equalsIgnoreCase("Chrome")) {
                 System.setProperty("webdriver.chrome.driver", path + "chromedriver.exe");
                 DesiredCapabilities capabilities = DesiredCapabilities.chrome();
