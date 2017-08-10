@@ -34,14 +34,13 @@ public class BrowserFactory {
 
         if (remoteBrowser.equalsIgnoreCase("true")) {
             String browserType = "Chrome"; //default
+            String path = System.getProperty("user.dir") + "/src/main/resources/Browsers/";
             if (System.getProperty("BrowserType") != null) {
                 browserType = System.getProperty("BrowserType");
             } else {
                 browserType = AutomationConstants.BROWSER_TYPE;
             }
-            logger.info("grid started in SauceLabs...");
             DesiredCapabilities capabilities = new DesiredCapabilities();
-
 
             if (browserType.equalsIgnoreCase("firefox")) {
                 capabilities = DesiredCapabilities.firefox();
@@ -54,12 +53,12 @@ public class BrowserFactory {
             }
             logger.info("Browser:" + browserType);
             capabilities.setPlatform(Platform.WIN10);
-            capabilities.setVersion("48");
+            //capabilities.setVersion("48");
             URL url = null;
             try {
                 url = new URL(AutomationConstants.SELENIUM_GRID_URL);
                 driver = new RemoteWebDriver(url, capabilities);
-                logger.info("driver created");
+                logger.info("grid started in remote grid...");
                 driver.get(AutomationConstants.URL);
                 logger.info("title is " + driver.getTitle());
             } catch (Exception e) {

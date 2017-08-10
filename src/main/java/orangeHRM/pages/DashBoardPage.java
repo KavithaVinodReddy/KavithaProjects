@@ -48,7 +48,7 @@ public class DashBoardPage extends BasePage {
     }
 
     public void expandPIMMenu() {
-        utilities.waitForElementClickable(By.id("menu_pim_viewPimModule"));
+        utilities.waitForElementClickable(By.cssSelector(".level1#menu_pim_viewPimModule"));
         if (isPIMExpanded()) return;
         pimTab.click();
         sleep(); // waiting for the page to load

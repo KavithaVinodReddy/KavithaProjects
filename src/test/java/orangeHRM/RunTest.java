@@ -26,6 +26,6 @@ public class RunTest {
     @AfterClass
     public static void closeBrowser() {
         logger.info("close the browser after the class");
-       // BrowserFactory.stopBrowser();
+        BrowserFactory.stopBrowser();
     }
 }
